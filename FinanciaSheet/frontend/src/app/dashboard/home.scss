@@ -1,0 +1,10 @@
+.cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin: 12px 0; }
+.card { background: #fff; border: 1px solid #eee; border-radius: 10px; padding: 12px; }
+.kpi { font-size: 1.25rem; font-weight: 700; }
+.kpi.neg { color: #b00020; }
+.label { opacity: .7; font-size: .875rem; }
+.grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+section { background: #fff; border: 1px solid #eee; border-radius: 10px; padding: 12px; }
+table { width: 100%; border-collapse: collapse; }
+th, td { padding: 6px 8px; border-bottom: 1px solid #f0f0f0; }
+h3 { margin-top: 0; }

@@ -1,1 +1,62 @@
-<p>register works!</p>
+﻿<div class="auth-wrapper">
+  <section class="auth-card">
+    <h2>Criar conta</h2>
+    <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+      <label class="field" [class.invalid]="nameCtrl?.invalid && (nameCtrl?.dirty || nameCtrl?.touched)">
+        <span>Nome completo</span>
+        <input
+          type="text"
+          formControlName="name"
+          placeholder="Nome"
+          autocomplete="name"
+          required
+        />
+        <small *ngIf="nameCtrl?.errors && (nameCtrl?.dirty || nameCtrl?.touched)">
+          Informe seu nome.
+        </small>
+      </label>
+
+      <label class="field" [class.invalid]="emailCtrl?.invalid && (emailCtrl?.dirty || emailCtrl?.touched)">
+        <span>Email</span>
+        <input
+          type="email"
+          formControlName="email"
+          placeholder="seuemail@exemplo.com"
+          autocomplete="email"
+          required
+        />
+        <small *ngIf="emailCtrl?.errors && (emailCtrl?.dirty || emailCtrl?.touched)">
+          Informe um email valido.
+        </small>
+      </label>
+
+      <label class="field" [class.invalid]="passwordCtrl?.invalid && (passwordCtrl?.dirty || passwordCtrl?.touched)">
+        <span>Senha</span>
+        <input
+          type="password"
+          formControlName="password"
+          placeholder="Minimo de 6 caracteres"
+          autocomplete="new-password"
+          required
+        />
+        <small *ngIf="passwordCtrl?.errors && (passwordCtrl?.dirty || passwordCtrl?.touched)">
+          A senha deve possuir ao menos 6 caracteres.
+        </small>
+      </label>
+
+      <button type="submit" [disabled]="loading || form.invalid">
+        <ng-container *ngIf="!loading; else loadingTpl">Criar conta</ng-container>
+      </button>
+      <ng-template #loadingTpl>
+        <span class="loading">Criando...</span>
+      </ng-template>
+    </form>
+
+    <p *ngIf="error" class="error" aria-live="assertive">{{ error }}</p>
+
+    <p class="switch">
+      Ja possui uma conta?
+      <a routerLink="/login">Faca login</a>
+    </p>
+  </section>
+</div>

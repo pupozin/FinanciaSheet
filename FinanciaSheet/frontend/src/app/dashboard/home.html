@@ -1,1 +1,82 @@
-<p>home works!</p>
+<h2>Dashboard</h2>
+
+<!-- seletor de mês: se não houver meses, o backend usa default -->
+<app-month-select (rangeChange)="onRangeChange($event)"></app-month-select>
+<span style="margin-left:8px; opacity:.8">{{ periodLabel() }}</span>
+
+<p *ngIf="loading()">Carregando...</p>
+<p *ngIf="error()" style="color:#c00">{{ error() }}</p>
+
+<!-- cards de resumo -->
+<div class="cards" *ngIf="ov()">
+  <div class="card">
+    <div class="kpi">R$ {{ ov()?.received | number:'1.2-2' }}</div>
+    <div class="label">Recebido</div>
+  </div>
+  <div class="card">
+    <div class="kpi neg">R$ {{ ov()?.spent | number:'1.2-2' }}</div>
+    <div class="label">Gastos</div>
+  </div>
+  <div class="card">
+    <div class="kpi" [class.neg]="(ov()?.balance||0) < 0">
+      R$ {{ ov()?.balance | number:'1.2-2' }}
+    </div>
+    <div class="label">Saldo</div>
+  </div>
+  <div class="card">
+    <div class="kpi">{{ ov()?.txCount }}</div>
+    <div class="label">Transações</div>
+  </div>
+</div>
+
+<div class="grid">
+  <!-- Top categorias -->
+  <section>
+    <h3>Top categorias (gastos)</h3>
+    <table *ngIf="topCats().length; else noCat">
+      <thead><tr><th>Categoria</th><th style="text-align:right">Total</th></tr></thead>
+      <tbody>
+        <tr *ngFor="let c of topCats()">
+          <td>{{ c.category }}</td>
+          <td style="text-align:right">R$ {{ c.total | number:'1.2-2' }}</td>
+        </tr>
+      </tbody>
+    </table>
+    <ng-template #noCat><p>Nenhum dado.</p></ng-template>
+  </section>
+
+  <!-- Top merchants -->
+  <section>
+    <h3>Maiores gastos (descrição)</h3>
+    <table *ngIf="topMerch().length; else noMerch">
+      <thead><tr><th>Descrição</th><th style="text-align:right">Total</th><th style="text-align:right">Qtd</th></tr></thead>
+      <tbody>
+        <tr *ngFor="let m of topMerch()">
+          <td>{{ m.description }}</td>
+          <td style="text-align:right">R$ {{ m.total | number:'1.2-2' }}</td>
+          <td style="text-align:right">{{ m.count }}</td>
+        </tr>
+      </tbody>
+    </table>
+    <ng-template #noMerch><p>Nenhum dado.</p></ng-template>
+  </section>
+</div>
+
+<!-- Série diária -->
+<section>
+  <h3>Série diária</h3>
+  <table *ngIf="daily().length; else noDaily">
+    <thead><tr><th>Data</th><th style="text-align:right">Recebido</th><th style="text-align:right">Gasto</th><th style="text-align:right">Saldo dia</th></tr></thead>
+    <tbody>
+      <tr *ngFor="let d of daily()">
+        <td>{{ d.date | date:'dd/MM' }}</td>
+        <td style="text-align:right">R$ {{ d.received | number:'1.2-2' }}</td>
+        <td style="text-align:right">R$ {{ d.spent | number:'1.2-2' }}</td>
+        <td style="text-align:right" [style.color]="d.balance < 0 ? '#c00' : '#090'">
+          R$ {{ d.balance | number:'1.2-2' }}
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <ng-template #noDaily><p>Nenhum dado.</p></ng-template>
+</section>

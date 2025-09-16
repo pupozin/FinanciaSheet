@@ -1,1 +1,48 @@
-<p>login works!</p>
+﻿<div class="auth-wrapper login">
+       <section class="auth-card">
+           <h2>Login</h2>
+           
+           <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+               <label class="field" [class.invalid]="emailCtrl?.invalid && (emailCtrl?.dirty || emailCtrl?.touched)">
+                   <input
+                   type="email"
+                   formControlName="email"
+                   placeholder="Email"
+                   autocomplete="email"
+                   required
+                   />
+                   <small *ngIf="emailCtrl?.errors && (emailCtrl?.dirty || emailCtrl?.touched)">
+                       Informe um email valido.
+                    </small>
+                </label>
+                
+                <label class="field" [class.invalid]="passwordCtrl?.invalid && (passwordCtrl?.dirty || passwordCtrl?.touched)">
+                    <input
+                    type="password"
+                    formControlName="password"
+                    placeholder="Senha"
+                    autocomplete="current-password"
+                    required
+                    />
+                    <small *ngIf="passwordCtrl?.errors && (passwordCtrl?.dirty || passwordCtrl?.touched)">
+                        Informe sua senha.
+                    </small>
+                </label>
+                
+                <button type="submit" [disabled]="loading || form.invalid">
+                    <ng-container *ngIf="!loading; else loadingTpl">Login</ng-container>
+                </button>
+                <ng-template #loadingTpl>
+                    <span class="loading">Login...</span>
+                </ng-template>
+            </form>
+            
+            <p *ngIf="error" class="error" aria-live="assertive">{{ error }}</p>
+            
+            <p class="switch">
+                Ainda nao tem conta?
+                <a routerLink="/register">Crie gratuitamente</a>
+            </p>
+        </section>
+</div>
+    
