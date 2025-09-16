@@ -9,6 +9,7 @@ import com.financiasheet.demo.repository.TransactionRepository;
 import com.financiasheet.demo.service.parser.GenericBrCsvParser;
 import com.financiasheet.demo.service.parser.TransactionCsvParser;
 import com.financiasheet.demo.service.parser.TransactionDraft;
+import com.financiasheet.demo.util.BrParse;
 import com.financiasheet.demo.util.HashUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -19,8 +20,11 @@ import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
+import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class ImportService {
@@ -44,12 +48,13 @@ public class ImportService {
             throw new RuntimeException("Falha ao ler CSV: " + e.getMessage(), e);       }
 
         List<Transaction> toSave = new ArrayList<>();
+        Set<String> seenFingerprints = new HashSet<>();
         for (TransactionDraft d : drafts) {
             try {
                 Transaction tx = new Transaction();
                 tx.setUser(user);
                 tx.setDate(d.date != null ? d.date : LocalDate.now());
-                tx.setAmount(d.amount);
+                tx.setAmount(adjustAmountByKind(d.amount, kind, d.description));
                 tx.setDescription(d.description);
                 tx.setAccount(account != null ? account : source);
                 tx.setKind(kind);
@@ -59,7 +64,9 @@ public class ImportService {
                 String fp = fingerprint(user, tx);
                 tx.setFingerprint(fp);
 
-                if (txRepo.findByFingerprint(fp).isPresent()) {
+                if (!seenFingerprints.add(fp)) {
+                    duplicates++;
+                } else if (txRepo.findByFingerprint(fp).isPresent()) {
                     duplicates++;
                 } else {
                     toSave.add(tx);
@@ -85,6 +92,42 @@ public class ImportService {
         batchRepo.save(b);
 
         return new ImportResponse(b.getId(), imported, duplicates, errors);
+    }
+
+    private static BigDecimal adjustAmountByKind(BigDecimal amount, String kind, String description) {
+        if (amount == null) {
+            return BigDecimal.ZERO;
+        }
+
+        if (kind != null && "FATURA".equalsIgnoreCase(kind)) {
+            BigDecimal abs = amount.abs();
+            String descNorm = description != null ? BrParse.norm(description) : "";
+
+            if (containsAny(descNorm,
+                    "pagamento", "pagto", "pago", "pagou",
+                    "estorno", "estornado", "estorn",
+                    "credito", "credit",
+                    "reembolso", "refund",
+                    "ajuste", "ajust",
+                    "ressarc")) {
+                return abs;
+            }
+            return abs.negate();
+        }
+
+        return amount;
+    }
+
+    private static boolean containsAny(String text, String... needles) {
+        if (text == null || text.isEmpty()) {
+            return false;
+        }
+        for (String n : needles) {
+            if (text.contains(n)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private static String fingerprint(User u, Transaction tx) {

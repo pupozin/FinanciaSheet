@@ -1,33 +1,18 @@
-<h2>Importar planilha</h2>
+ï»¿<h2>Importar planilha</h2>
 <app-file-upload (fileChange)="onFile($event)"></app-file-upload>
 
-<form class="import-form" (ngSubmit)="upload()">
-  <label>
-    Tipo do arquivo
-    <select [(ngModel)]="kind" name="kind">
-      <option value="EXTRATO">Extrato</option>
-      <option value="FATURA">Fatura</option>
-    </select>
-  </label>
+<p *ngIf="suggestedKind()" class="hint">Arquivo parece ser {{ suggestedKind() === 'FATURA' ? 'uma fatura' : 'um extrato' }}.</p>
 
-  <label>
-    Origem (source)
-    <input type="text" [(ngModel)]="source" name="source" placeholder="ex.: nubank_csv">
-  </label>
-
-  <label>
-    Conta (opcional)
-    <input type="text" [(ngModel)]="account" name="account" placeholder="ex.: nubank">
-  </label>
-
-  <button type="submit" [disabled]="loading()">Importar</button>
-</form>
+<div class="import-actions">
+  <button type="button" (click)="upload('FATURA')" [disabled]="loading() || !file()">Importar fatura</button>
+  <button type="button" (click)="upload('EXTRATO')" [disabled]="loading() || !file()">Importar extrato</button>
+</div>
 
 <p *ngIf="loading()">Enviando...</p>
 <p *ngIf="error()" class="error">{{ error() }}</p>
 
 <div *ngIf="result()" class="result">
-  <h3>Importação concluída</h3>
+  <h3>Importacao concluida</h3>
   <ul>
     <li>Batch: {{ result()?.batchId }}</li>
     <li>Importados: {{ result()?.imported }}</li>

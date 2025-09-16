@@ -16,12 +16,40 @@ public final class BrParse {
         return n.toLowerCase(Locale.ROOT).trim();
     }
 
-    // R$ 1.234,56  |  1234.56  |  -10,70
+    // R$ 1.234,56  |  1,234.56  |  1234.56  |  -10,70
     public static BigDecimal money(String raw) {
         if (raw == null) return BigDecimal.ZERO;
-        String s = raw.replace("R$", "").replace(" ", "").replace("\u00A0","")
-                .replace(".", "").replace(",", ".").trim();
+        String s = raw.replace("R$", "")
+                .replace(" ", "")
+                .replace("\u00A0", "")
+                .trim();
         if (s.isEmpty() || s.equals("-")) return BigDecimal.ZERO;
+
+        int lastComma = s.lastIndexOf(',');
+        int lastDot = s.lastIndexOf('.');
+
+        if (lastComma >= 0 && lastDot >= 0) {
+            if (lastComma > lastDot) {
+                // Formato BR: 1.234,56
+                s = s.replace(".", "").replace(",", ".");
+            } else {
+                // Formato US com milhares: 1,234.56
+                s = s.replace(",", "");
+            }
+        } else if (lastComma >= 0) {
+            // Apenas virgula -> decimal BR (10,70)
+            s = s.replace(".", "").replace(",", ".");
+        } else if (lastDot >= 0) {
+            // Apenas ponto. Se tiver mais de um, trata como separador de milhares
+            if (s.indexOf('.') != lastDot) {
+                s = s.replace(".", "");
+            }
+            s = s.replace(",", "");
+        } else {
+            // Numero inteiro sem separadores
+            s = s.replace(",", "").replace(".", "");
+        }
+
         return new BigDecimal(s);
     }
 
