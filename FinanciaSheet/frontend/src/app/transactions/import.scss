@@ -1,0 +1,32 @@
+.import-form {
+  margin-top: 16px;
+  display: grid;
+  gap: 12px;
+  max-width: 360px;
+}
+
+.import-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-weight: 600;
+}
+
+.import-form input,
+.import-form select,
+.import-form button {
+  padding: 8px;
+  font-size: 14px;
+}
+
+.error {
+  margin-top: 12px;
+  color: #c00;
+}
+
+.result {
+  margin-top: 16px;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+}

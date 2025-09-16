@@ -102,7 +102,6 @@ public class ImportService {
 
     private static InputStream ensureMarkSupported(InputStream in) { return in.markSupported() ? in : new BufferedInputStream(in);
     } private static Charset charsetFor(MultipartFile f) {
-        // seus CSVs estão em UTF-8; mantemos UTF-8 por padrão
         return StandardCharsets.UTF_8;
     }
 }
