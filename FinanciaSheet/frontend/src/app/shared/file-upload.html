@@ -1,1 +1,8 @@
-<p>file-upload works!</p>
+<div class="dropzone" [class.dragging]="dragging()"
+     (drop)="onDrop($event)" (dragover)="onDragOver($event)" (dragleave)="onDragLeave()">
+  <p *ngIf="!fileName()">Arraste o arquivo .csv aqui</p>
+  <p *ngIf="fileName()">Selecionado: <strong>{{ fileName() }}</strong></p>
+  <button type="button" (click)="fileInput.click()">Selecionar arquivo</button>
+  <input #fileInput type="file" accept=".csv" (change)="onSelect($event)" hidden>
+  <button type="button" (click)="clear()" *ngIf="fileName()">Limpar</button>
+</div>

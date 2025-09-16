@@ -7,21 +7,11 @@ import { AuthService } from '../core/auth';
   selector: 'app-navbar',
   standalone: true,
   imports: [CommonModule, RouterLink],
-  template: `
-    <header class="nav">
-      <a routerLink="/dashboard">FinanciaSheet</a>
-      <nav>
-        <a routerLink="/transactions">Transações</a>
-        <a routerLink="/invoices">Faturas</a>
-        <a routerLink="/settings">Config</a>
-        <button *ngIf="auth.isLoggedIn()" (click)="logout()">Sair</button>
-      </nav>
-    </header>
-  `,
-  styles: [`.nav{display:flex;justify-content:space-between;gap:16px;align-items:center;padding:12px 16px;border-bottom:1px solid #eee}`]
+  templateUrl: './navbar.html',
+  styleUrls: ['./navbar.scss']
 })
 export class NavbarComponent {
-  auth = inject(AuthService);
+  private auth = inject(AuthService);
   private router = inject(Router);
   logout(){ this.auth.logout(); this.router.navigateByUrl('/login'); }
 }

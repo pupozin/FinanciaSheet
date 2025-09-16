@@ -1,1 +1,20 @@
-<p>import works!</p>
+<h2>Importar CSV</h2>
+<app-file-upload (fileChange)="onFile($event)"></app-file-upload>
+
+<div style="margin-top:12px;">
+  <button (click)="upload('EXTRATO')" [disabled]="loading()">Importar Extrato</button>
+  <button (click)="upload('FATURA')"  [disabled]="loading()">Importar Fatura</button>
+</div>
+
+<p *ngIf="loading()">Enviando...</p>
+<p *ngIf="error()" style="color:#c00">{{ error() }}</p>
+
+<div *ngIf="result()" style="margin-top:12px;">
+  <h3>Importação concluída</h3>
+  <ul>
+    <li>Batch: {{ result()?.batchId }}</li>
+    <li>Importados: {{ result()?.imported }}</li>
+    <li>Duplicados: {{ result()?.duplicates }}</li>
+    <li>Erros: {{ result()?.errors }}</li>
+  </ul>
+</div>

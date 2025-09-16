@@ -1,1 +1,24 @@
-<p>list works!</p>
+<h2>Transações</h2>
+<p *ngIf="loading()">Carregando...</p>
+<p *ngIf="error()" style="color:#c00">{{ error() }}</p>
+
+<table *ngIf="!loading() && !error()">
+  <thead>
+    <tr>
+      <th>Data</th><th>Descrição</th><th>Conta</th><th>Tipo</th><th>Valor</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let t of items()">
+      <td>{{ t.date | date:'dd/MM/yyyy' }}</td>
+      <td>{{ t.description }}</td>
+      <td>{{ t.account }}</td>
+      <td>{{ t.kind }}</td>
+      <td [style.color]="t.amount < 0 ? '#c00' : '#090'">{{ t.amount | number:'1.2-2' }}</td>
+    </tr>
+  </tbody>
+</table>
+
+<button (click)="load(page()-1)" [disabled]="page()<=0">Anterior</button>
+<button (click)="load(page()+1)" [disabled]="(page()+1)*size() >= total()">Próxima</button>
+<span> Página {{ page()+1 }} </span>

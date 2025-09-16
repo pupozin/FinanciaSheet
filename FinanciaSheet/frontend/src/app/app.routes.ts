@@ -10,8 +10,8 @@ export const appRoutes: Routes = [
     loadComponent: () => import('./dashboard/home').then(m => m.HomeComponent) },
   { path: 'transactions', canActivate: [canActivateAuth],
     children: [
-      { path: '',       loadComponent: () => import('./transactions/list').then(m => m.List) },
-      { path: 'import', loadComponent: () => import('./transactions/import').then(m => m.Import) },
+      { path: '',       loadComponent: () => import('./transactions/list').then(m => m.ListComponent) },
+      { path: 'import', loadComponent: () => import('./transactions/import').then(m => m.ImportComponent) },
     ]},
   { path: 'invoices', canActivate: [canActivateAuth],
     children: [
